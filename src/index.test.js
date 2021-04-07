@@ -6,56 +6,56 @@ const makePromiseRejecting = (error) => {
     return new Promise((resolve, reject) => setTimeout(() => reject(error), 0))
 }
 
-it('should resolve promise with right data v1', () => {
+it('should resolve promise with right data v1', async () => {
     expect.assertions(1)
 
     const promise = makePromiseResolving('some data')
 
-    return promise.then((data) => {
-        expect(data).toBe('some data')
-    })
+    // return promise.then((data) => {
+    //     expect(data).toBe('some data')
+    // })
+
+    const result = await promise
+
+    expect(result).toBe('some data')
 })
 
-it('should resolve promise with right data v2', () => {
+it('should resolve promise with right data v2', async () => {
     expect.assertions(1)
 
-    return makePromiseResolving('some data')
-        .then((data) => {
-            expect(data).toBe('some data')
-        })
+    const result = await makePromiseResolving('some data')
+
+    expect(result).toBe('some data')
 })
 
-it('should reject wit right error v1', () => {
+it('should reject wit right error v1', async () => {
     expect.assertions(1)
 
-    const promise = makePromiseRejecting('some error')
-
-    return promise.catch((error) => {
+    try {
+        await makePromiseRejecting('some error')
+    } catch (error) {
         expect(error).toBe('some error')
-    })
+    }
 })
 
-it('should reject wit right error v2', () => {
+it('should reject wit right error v2', async () => {
     expect.assertions(2)
 
-    const promise = makePromiseRejecting(new Error('some error'))
-
-    return promise.catch((error) => {
+    try {
+        await makePromiseRejecting(new Error('some error'))
+    } catch (error) {
         expect(error).toBeInstanceOf(Error)
         expect(error.message).toBe('some error')
-    })
+    }
 })
 
-it('should resolve with right data and not catch', () => {
+it('should resolve with right data and not catch', async () => {
     expect.assertions(1)
 
-    const promise = makePromiseResolving('some data')
-
-    return promise
-        .then((data) => {
-            expect(data).toBe('some data')
-        })
-        .catch((error) => {
-            expect(error).toBe('some error')
-        })
+    try {
+        const result = await makePromiseResolving('some data')
+        expect(result).toBe('some data')
+    } catch (error) {
+        expect(error).toBe('some error')
+    }
 })
